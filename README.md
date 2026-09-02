@@ -1,93 +1,168 @@
 # GuildKeeper
 
+Système de gestion de guilde RPG, support du cours **Tests Unitaires et
+Logiciels** (B3 Architecture du Logiciel, ESGI).
 
+## À quoi sert ce dépôt
 
-## Getting started
+C'est le **projet souche** remis aux étudiants pour le projet final :
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- un **backend Java** = serveur HTTP (Javalin) exposant les règles métier
+  sous `/api/v1` ;
+- un **client TypeScript** (`@guild-keeper/progression-client`) = client HTTP
+  lecture seule + logique de progression + CLI ;
+- une **suite de tests partiellement écrite** : des tests complets servent
+  d'exemple, d'autres sont **à compléter** — marqués `@Tag("todo")` (Java) /
+  `todo(...)` (Vitest), **exclus du run par défaut** pour que `./mvnw test` et
+  `npm test` restent verts. Pour les voir : `./mvnw test -Ptodo` /
+  `npm run test:todo` ;
+- le module `finance`, **fonctionnel mais sans aucun test** : c'est le cœur du
+  projet final. Les instructions à suivre seront données avec le projet final.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+L'architecture du dépôt est décrite dans [`docs/architecture.md`](docs/architecture.md).
 
-## Add your files
-
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+## Arborescence
 
 ```
-cd existing_repo
-git remote add origin https://framagit.org/digicrafters/guildkeeper.git
-git branch -M main
-git push -uf origin main
+guildkeeper/
+├── backend-java/     Serveur Javalin /api/v1, règles métier, persistance SQLite, features Cucumber
+├── quests-ts/        @guild-keeper/progression-client : client HTTP + planner + CLI
+├── docs/             Architecture, exemples d'API
+└── README.md
 ```
 
-## Integrate with your tools
+Modules Java (`fr.dev.sensei.guild.keeper.*`) : `experience`, `recruitment`,
+`missions`, `rewards`, `promotion`, `finance`, `http` (serveur, couvert par les
+tests) et `persistence.sqlite` (adaptateurs, hors couverture). Les tests du
+domaine utilisent **toujours** les repositories in-memory ; les implémentations
+SQLite ne servent qu'au serveur.
 
-* [Set up project integrations](https://framagit.org/digicrafters/guildkeeper/-/settings/integrations)
+## Prérequis
 
-## Collaborate with your team
+- **JDK 21+** — Maven via le wrapper (`./mvnw`), rien à installer.
+- **Node.js ≥ 22.18** (voir [`quests-ts/.nvmrc`](quests-ts/.nvmrc)) — le CLI est
+  lancé directement en `.ts` grâce au *type stripping* natif de Node.
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+## Backend Java
 
-## Test and Deploy
+Depuis `backend-java/` :
 
-Use the built-in continuous integration in GitLab.
+```bash
+./mvnw test        # compile + tests (spotless:check inclus)
+./mvnw verify      # + JaCoCo + jar exécutable target/guildkeeper.jar
+./mvnw test -Ptodo # exécute UNIQUEMENT les tests à compléter (tous rouges, build non interrompu)
+```
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+- Rapport JaCoCo : `backend-java/target/site/jacoco/index.html`.
+- Le module `finance` apparaît à **0 % de couverture** : c'est volontaire, il
+  n'est pas exclu.
+- `persistence.sqlite` (adaptateurs, sans test unitaire attendu) est exclu du
+  rapport ; `http` **n'est pas** exclu (couvert par `JavalinTest`).
+- Formatage minimal via **Spotless** (imports inutilisés, espaces, newline
+  finale) : `./mvnw spotless:apply` corrige, `verify` vérifie.
 
-***
+### Cucumber
 
-# Editing this README
+Disposition standard Maven, scénarios **en français** (`# language: fr`) :
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+- `src/test/resources/features/recruitment.feature` ;
+- `src/test/java/fr/dev/sensei/guild/keeper/cucumber/RecruitmentSteps.java`
+  (annotations `io.cucumber.java.fr` : `@Soit`, `@Quand`, `@Alors`, `@Et`).
 
-## Suggestions for a good README
+Exécutés par `./mvnw test` via `RunCucumberTest`. `surefire` affiche
+`Tests run: 0` pour la suite (limitation connue) ; le détail par scénario est
+dans `target/cucumber-reports/Cucumber.xml`, remonté par la CI.
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+## Client TypeScript
 
-## Name
-Choose a self-explaining name for your project.
+Depuis `quests-ts/` (`npm install` d'abord) :
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+| Script | Rôle |
+|---|---|
+| `npm run test:watch` | boucle TDD (Vitest en watch) |
+| `npm test` | tests (les `todo(...)` sont ignorés → **vert**) |
+| `npm run test:todo` | exécute les tests à compléter (rouges) |
+| `npm run test:contract` | contrat contre un serveur réel (voir CI) |
+| `npm run typecheck` / `lint` / `format` | qualité |
+| `npm run check` | typecheck + lint + format:check + tests (gate CI) |
+| `npm run cli -- <cmd>` | lance le CLI (voir plus bas) |
+| `npm run coverage` / `build` / `clean` | couverture / dist / nettoyage |
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+`src/index.ts` ré-exporte tout. Couverture : `src/client/dto.ts` (interfaces) et
+`src/cli/main.ts` (câblage I/O) sont exclus.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+- **`src/client/`** — client HTTP **lecture seule** :
+  `createGuildKeeperClient({ baseUrl })` → `quests.list/get/rewardPreview`,
+  `members.list/get/assignments`, `guild()`. Transport avec délai maximum, réessais
+  (5xx / 429) et erreurs typées (`NotFoundError`, `ValidationError`, `ApiError`,
+  `NetworkError`). DTO écrits à la main, réponses réelles dans `fixtures/`.
+- **`src/planner/`** — fonctions pures nourries par les DTO : `unlockTree`
+  (`isQuestUnlocked`, `availableQuests`, lookup), `simulate`
+  (`calculateExperienceReward`, `calculateLoot`, `simulateReward` — **indicatif**,
+  le serveur fait foi), `recommend`, `progressionReport`.
+- **`src/cli/`** — sous-commandes façon `git`, parseur maison (voir ci-dessous).
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+## Développement local
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+Deux terminaux :
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+```bash
+# Terminal 1 — le serveur
+cd backend-java
+GUILDKEEPER_ENV=dev ./mvnw -q compile exec:java     # http://localhost:7070 + jeu de démo
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+```bash
+# Terminal 2 — le CLI
+cd quests-ts
+npm run cli -- report Dragan
+npm run cli                    # mode interactif (REPL, sans état)
+```
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+- Serveur : port `GUILDKEEPER_PORT` (défaut 7070), base `GUILDKEEPER_DB` (défaut
+  `guildkeeper.db`), schéma + catalogue créés au démarrage. `GUILDKEEPER_ENV=dev`
+  seede quelques membres et attributions.
+- CLI : `GUILDKEEPER_API_URL` (défaut `http://localhost:7070`).
+- **Référence de l'API** (toutes les routes, corps, codes d'erreur) + requêtes
+  exécutables : [`docs/api-examples.http`](docs/api-examples.http) (format REST
+  Client / client HTTP IntelliJ). Les écritures (recruter, assigner, déposer…)
+  passent par là.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+### Commandes du CLI
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+```bash
+npm run cli -- quests list [--json]
+npm run cli -- quests show <id> [--json]
+npm run cli -- members list [--json]
+npm run cli -- unlock-status "<quête>" [--completed "<quête>"]… [--json]
+npm run cli -- plan <membre> [--json]
+npm run cli -- simulate reward "<quête>" --luck <1-10> [--json]
+npm run cli -- report <membre> [--json]
+npm run cli -- help [<commande>]
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## Intégration continue
 
-## License
-For open source projects, say how it is licensed.
+À chaque push (toutes branches). **Les deux suites sont vertes** ; une erreur
+réelle (compilation, lint, format, test complété qui casse) fait échouer le
+pipeline.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- **`.gitlab-ci.yml`** — CI de référence. `backend-java` (`./mvnw verify`),
+  `quests-ts` (`npm run check`), puis **`contrat-cross-stack`** : démarre le jar
+  et lance `npm run test:contract` (DTO ⇄ réponses réelles, `simulateReward` ⇄
+  `reward-preview`). Rapports JUnit (surefire + Cucumber + Vitest) dans l'onglet
+  *Tests*.
+- **`.github/workflows/ci.yml`** — miroir GitHub Actions, **non testé** (voir le
+  commentaire en tête de fichier).
+
+## Conventions
+
+- **Prénoms des membres** (convention de rédaction, *pas* une règle métier) :
+  dans les exemples et les tests, préférer des prénoms distinctifs — Albéric,
+  Attila, Dragan, Dorian, Dante, Ektor… — plutôt que des noms de fantasy
+  génériques. `recruit()` accepte n'importe quel nom non vide.
+- Nommage des tests : `should_..._when_...` (Java) / `"…"` descriptif (TS).
+- Pattern **AAA** (Arrange / Act / Assert).
+- Fins de ligne LF (`.gitattributes` + `.editorconfig`).
+
+Voir [`CONTRIBUTING.md`](CONTRIBUTING.md) pour faire évoluer le support.
