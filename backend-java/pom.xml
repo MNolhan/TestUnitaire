@@ -32,6 +32,7 @@
 
         <maven-compiler-plugin.version>3.16.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
+        <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
         <jacoco-plugin.version>0.8.15</jacoco-plugin.version>
         <maven-shade-plugin.version>3.6.2</maven-shade-plugin.version>
         <exec-maven-plugin.version>3.6.3</exec-maven-plugin.version>
@@ -149,6 +150,24 @@
                 <version>${maven-compiler-plugin.version}</version>
             </plugin>
 
+            <!-- Expose le chemin du jar mockito-core dans la propriete
+                 ${org.mockito:mockito-core:jar}, utilisee par surefire pour
+                 charger Mockito comme -javaagent (voir doc Mockito : evite le
+                 self-attaching, deprecie sur les JDK recents). -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>resolve-mockito-agent</id>
+                        <goals>
+                            <goal>properties</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Formatage minimal (imports inutilises, espaces, newline finale).
                  mvn spotless:apply corrige, mvn verify verifie (spotless:check). -->
             <plugin>
@@ -190,7 +209,8 @@
                     <!-- Les tests a completer par les etudiants portent @Tag("todo") : exclus du
                          run par defaut (mvn test reste vert). Pour les voir : mvn test -Ptodo. -->
                     <excludedGroups>todo</excludedGroups>
-                    <argLine>@{argLine} -XX:+EnableDynamicAgentLoading -Dnet.bytebuddy.experimental=true
+                    <argLine>-javaagent:${org.mockito:mockito-core:jar} -Xshare:off @{argLine}
+                        -Dnet.bytebuddy.experimental=true
                         -Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>

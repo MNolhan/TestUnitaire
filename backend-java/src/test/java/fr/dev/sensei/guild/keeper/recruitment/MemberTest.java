@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Atelier du chapitre 2 — test d'effet de bord.
@@ -22,16 +24,31 @@ import static org.junit.jupiter.api.Assertions.fail;
 class MemberTest {
 
     // TODO: Chapitre 2 — « Atelier pratique - Consolider la suite de tests GuildKeeper » (effet de bord)
-    @Tag("todo")
+    // @Tag("todo")
     @Test
     void should_increase_experience_points_when_experience_is_added() {
-        fail("Test à compléter");
+        // Arrange
+        Member member = new Member("m-1", "Nolhan", MemberRank.NOVICE, 0, 1);
+
+        // Act
+        member.addExperience(60);
+
+        // Assert
+        assertThat(member.experiencePoints()).isEqualTo(60);
     }
 
     // TODO: Chapitre 2 — « Atelier pratique - Consolider la suite de tests GuildKeeper » (effet de bord)
-    @Tag("todo")
+    // @Tag("todo")
     @Test
     void should_reject_a_non_positive_experience_gain() {
-        fail("Test à compléter");
+        Member member = Member.novice("id-1", "Nolhan", 1);
+
+        // Act & Assert
+        assertThatThrownBy(() -> member.addExperience(0))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThatThrownBy(() -> member.addExperience(-10))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThat(member.experiencePoints()).isZero();
     }
 }

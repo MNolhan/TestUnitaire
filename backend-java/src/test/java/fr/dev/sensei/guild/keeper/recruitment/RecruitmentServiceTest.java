@@ -11,9 +11,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.any;
 
 @ExtendWith(MockitoExtension.class)
 class RecruitmentServiceTest {
@@ -44,17 +46,34 @@ class RecruitmentServiceTest {
 
     // TODO: Chapitre 4 — « TP guidé - Isoler le service de recrutement »
     //       (Given/When/Then posés en Chapitre 1 — « Atelier pratique - Premiers pas sur GuildKeeper »)
-    @Tag("todo")
+    // @Tag("todo")
     @Test
     void should_throw_DuplicateMemberException_when_name_already_exists() {
-        fail("Test à compléter");
+        // Arrange
+        Member Nolhan = Member.novice("1", "Nolhan", 1);
+        when(memberRepository.findByName("Nolhan")).thenReturn(Optional.of(Nolhan));
+
+        // Act et Assert
+        assertThatThrownBy(() -> recruitmentService.recruit("Nolhan"))
+                .isInstanceOf(DuplicateMemberException.class)
+                .hasMessageContaining("Nolhan");
+            
+        verify(memberRepository, never()).save(any());
     }
 
     // TODO: Chapitre 4 — « TP guidé - Isoler le service de recrutement »
     //       (Given/When/Then posés en Chapitre 1 — « Atelier pratique - Premiers pas sur GuildKeeper »)
-    @Tag("todo")
+    // @Tag("todo")
     @Test
     void should_reject_candidate_when_name_is_blank() {
-        fail("Test à compléter");
+        // Arrange
+        Member blankNameMember = Member.novice("1", "", 1);
+
+        // Act et Assert
+        assertThatThrownBy(() -> recruitmentService.recruit(blankNameMember.name()))
+                .isInstanceOf(IllegalArgumentException.class);
+        
+        verify(memberRepository, never()).findByName(any());
+        verify(memberRepository, never()).save(any());
     }
 }

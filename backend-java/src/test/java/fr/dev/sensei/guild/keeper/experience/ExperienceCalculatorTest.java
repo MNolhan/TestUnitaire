@@ -6,11 +6,10 @@ import fr.dev.sensei.guild.keeper.missions.QuestAssignmentStatus;
 import fr.dev.sensei.guild.keeper.missions.QuestDifficulty;
 import fr.dev.sensei.guild.keeper.recruitment.Member;
 import fr.dev.sensei.guild.keeper.recruitment.MemberRank;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 class ExperienceCalculatorTest {
 
@@ -71,16 +70,36 @@ class ExperienceCalculatorTest {
     }
 
     // TODO: Chapitre 2 — « TP guidé - Tester le calcul d'expérience »
-    @Tag("todo")
+    // @Tag("todo")
     @Test
     void should_add_fixed_50_xp_boost_when_legendary_quest_completed_by_novice() {
-        fail("Test à compléter");
+        // Arrange
+        Member member = new Member("m-" + MemberRank.NOVICE, "Nolhan", MemberRank.NOVICE, 0, 1);
+        Quest legendaryQuest = Quest.standalone("q-2", "Sauver le royaume", QuestDifficulty.LEGENDARY, 100, 40);
+        QuestAssignment assignment = new QuestAssignment(member, legendaryQuest, QuestAssignmentStatus.COMPLETED);
+
+        // Act
+        int reward = calculator.calculateExperienceReward(assignment);
+
+        // Assert
+        assertThat(reward).isEqualTo(150);
     }
 
-    // TODO: Chapitre 2 — « Atelier pratique - Consolider la suite de tests GuildKeeper »
-    @Tag("todo")
     @Test
     void should_throw_business_exception_when_quest_is_not_completed() {
-        fail("Test à compléter");
+        // Arrange : une quête assignée mais pas terminée
+        Member member = new Member("m-1", "Nolhan", MemberRank.NOVICE, 0, 5);
+        Quest quest = Quest.standalone("q-3", "Explorer la forêt", QuestDifficulty.EASY, 100, 40);
+        QuestAssignment assignment =
+                new QuestAssignment(member, quest, QuestAssignmentStatus.ASSIGNED);
+
+        // Act
+        Throwable thrown = catchThrowable(() -> calculator.calculateExperienceReward(assignment));
+
+        // Assert
+        assertThat(thrown)
+                .isInstanceOf(QuestNotCompletedException.class)
+                .hasMessageContaining("q-3")
+                .hasMessageContaining("ASSIGNED");
     }
 }

@@ -47,16 +47,16 @@ class QuestAssignmentServiceTest {
     }
 
     // TODO: Chapitre 5 — « Attribuer une quête en TDD » (approche par les interactions)
-    @Tag("todo")
-    @Test
-    void should_reject_assignment_when_member_already_has_an_assigned_quest() {
-        fail("Test à compléter");
-    }
+    // @Tag("todo")
+    // @Test
+    // void should_reject_assignment_when_member_already_has_an_assigned_quest() {
+    //     fail("Test à compléter");
+    // }
 
     // TODO: Chapitre 5 — « Attribuer une quête en TDD » (approche par les interactions)
-    @Tag("todo")
-    @Test
-    void should_reject_assignment_when_a_prerequisite_quest_is_not_completed() {
-        fail("Test à compléter");
-    }
+    // @Tag("todo")
+    // @Test
+    // void should_reject_assignment_when_a_prerequisite_quest_is_not_completed() {
+    //     fail("Test à compléter");
+    // }
 }
