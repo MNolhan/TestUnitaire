@@ -19,8 +19,19 @@ describe('findQuestById / findQuestByTitle', () => {
   });
 
   // TODO: Chapitre 3 — « Atelier pratique - Consolider les tests Vitest du module quêtes »
-  todo('returns undefined when the list is empty', () => {
-    expect.fail('Test à compléter');
+  it('returns undefined when the list is empty', () => {
+
+    // 2 test dans un seul pas bon !!
+
+    // Act
+    const resultByID = findQuestById([], '1');
+    // Assert
+    expect(resultByID).toBeUndefined();
+
+    // Act
+    const resultByTitle = findQuestByTitle([], 'Nonexistent Quest');
+    // Assert
+    expect(resultByTitle).toBeUndefined();
   });
 });
 
@@ -34,8 +45,9 @@ describe('isQuestUnlocked', () => {
   });
 
   // TODO: Chapitre 3 — « Atelier pratique - Consolider les tests Vitest du module quêtes »
-  todo('locks a quest whose prerequisite has not been completed', () => {
-    expect.fail('Test à compléter');
+  it('locks a quest whose prerequisite has not been completed', () => {
+    expect(isQuestUnlocked(caravan!, [])).toBe(false);
+    expect(isQuestUnlocked(dragon!, ['1'])).toBe(false);
   });
 });
 
