@@ -14,9 +14,9 @@ Le détail de chaque livrable est dans les slides du projet. Cette checklist ne 
 
 ### Livrables (cocher quand terminé)
 
-- [ ] Livrable 1 : suite de tests complète de `GuildFinanceService`
-- [ ] Livrable 2 : `finance.feature` et ses step definitions Cucumber
-- [ ] Livrable 3 : `distributeDividends` développé en TDD (détail ci-dessous)
+- [x] Livrable 1 : suite de tests complète de `GuildFinanceService`
+- [x] Livrable 2 : `finance.feature` et ses step definitions Cucumber
+- [x] Livrable 3 : `distributeDividends` développé en TDD (détail ci-dessous)
 - [ ] Livrable 4 : rapport de couverture généré
 - [ ] Livrable 5 : synthèse écrite ci-dessous
 
@@ -24,12 +24,12 @@ Le détail de chaque livrable est dans les slides du projet. Cette checklist ne 
 
 Un cycle rouge -> vert -> refactor à chaque palier, chaque test écrit avant le code de production.
 
-- [ ] palier 1 : guilde vide -> répartition retournée vide, compte inchangé (test rouge imposé, à écrire en premier)
-- [ ] palier 2 : un seul membre -> il reçoit toute l'enveloppe, le compte est débité d'autant
-- [ ] palier 3 : deux membres de rangs différents -> parts au prorata des poids, reliquat laissé sur le compte
-- [ ] palier 4 : `@ParameterizedTest` sur `p` invalide (`0`, `-5`) -> `InvalidAmountException`, compte inchangé
-- [ ] palier 5 : `p > 100`, un seul membre, solde `100`, `p = 200` -> `checkSolvency` renvoie `false` -> `InsufficientFundsException`, compte inchangé
-- [ ] palier 6 : le solde ne devient jamais négatif
+- [x] palier 1 : guilde vide -> répartition retournée vide, compte inchangé (test rouge imposé, à écrire en premier)
+- [x] palier 2 : un seul membre -> il reçoit toute l'enveloppe, le compte est débité d'autant
+- [x] palier 3 : deux membres de rangs différents -> parts au prorata des poids, reliquat laissé sur le compte
+- [x] palier 4 : `@ParameterizedTest` sur `p` invalide (`0`, `-5`) -> `InvalidAmountException`, compte inchangé
+- [x] palier 5 : `p > 100`, un seul membre, solde `100`, `p = 200` -> `checkSolvency` renvoie `false` -> `InsufficientFundsException`, compte inchangé
+- [x] palier 6 : le solde ne devient jamais négatif
 
 ### Contrôles avant rendu
 
