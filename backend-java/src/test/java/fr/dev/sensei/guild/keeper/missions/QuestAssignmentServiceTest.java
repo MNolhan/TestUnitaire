@@ -3,7 +3,6 @@ package fr.dev.sensei.guild.keeper.missions;
 import fr.dev.sensei.guild.keeper.recruitment.Member;
 import fr.dev.sensei.guild.keeper.recruitment.MemberRank;
 import fr.dev.sensei.guild.keeper.recruitment.MemberRepository;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -12,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)

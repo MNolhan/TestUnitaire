@@ -10,8 +10,6 @@ import fr.dev.sensei.guild.keeper.recruitment.Member;
 import fr.dev.sensei.guild.keeper.recruitment.MemberRank;
 import fr.dev.sensei.guild.keeper.recruitment.MemberRepository;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -19,10 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -91,7 +87,7 @@ class RewardsDistributionServiceTest {
         Member veteran = new Member("m-1", "Dante", MemberRank.VETERAN, 0, 5);
         Quest quest = Quest.standalone("q-1", "Purger le donjon", QuestDifficulty.HARD, 100, 100);
         QuestAssignment assignment = new QuestAssignment(veteran, quest, QuestAssignmentStatus.ASSIGNED);
-        
+
         // Act
         RewardsDistributionService service = new RewardsDistributionService(
                 memberRepository, notificationPort, experienceCalculator, lootCalculator);

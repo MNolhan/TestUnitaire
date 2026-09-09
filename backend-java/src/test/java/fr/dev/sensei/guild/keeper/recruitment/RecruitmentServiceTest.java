@@ -1,6 +1,5 @@
 package fr.dev.sensei.guild.keeper.recruitment;
 
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -57,7 +56,7 @@ class RecruitmentServiceTest {
         assertThatThrownBy(() -> recruitmentService.recruit("Nolhan"))
                 .isInstanceOf(DuplicateMemberException.class)
                 .hasMessageContaining("Nolhan");
-            
+
         verify(memberRepository, never()).save(any());
     }
 
@@ -72,7 +71,7 @@ class RecruitmentServiceTest {
         // Act et Assert
         assertThatThrownBy(() -> recruitmentService.recruit(blankNameMember.name()))
                 .isInstanceOf(IllegalArgumentException.class);
-        
+
         verify(memberRepository, never()).findByName(any());
         verify(memberRepository, never()).save(any());
     }
