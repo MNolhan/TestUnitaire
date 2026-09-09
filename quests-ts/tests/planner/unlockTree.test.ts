@@ -20,7 +20,6 @@ describe('findQuestById / findQuestByTitle', () => {
 
   // TODO: Chapitre 3 — « Atelier pratique - Consolider les tests Vitest du module quêtes »
   it('returns undefined when the list is empty', () => {
-
     // 2 test dans un seul pas bon !!
 
     // Act
