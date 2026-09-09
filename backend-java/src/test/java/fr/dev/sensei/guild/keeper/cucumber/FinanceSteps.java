@@ -10,16 +10,9 @@ import io.cucumber.java.fr.Soit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Step definitions de {@code features/finance.feature} (Livrable 2).
- *
- * <p>Meme forme que {@link RecruitmentSteps} : une instance par scenario, les
- * champs portent l'etat isole du scenario. On reutilise tel quel
- * {@link GuildFinanceService} et {@link InMemoryGuildAccountRepository}.
- */
 public class FinanceSteps {
 
-    private GuildAccountRepository accountRepository = new InMemoryGuildAccountRepository(); 
+    private GuildAccountRepository accountRepository = new InMemoryGuildAccountRepository();
     private GuildFinanceService financeService = new GuildFinanceService(accountRepository);
     private GuildAccount account;
 
